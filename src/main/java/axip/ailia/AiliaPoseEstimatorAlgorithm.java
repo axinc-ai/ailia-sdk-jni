@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Algorithms for Pose Estimation
+*/
 public enum AiliaPoseEstimatorAlgorithm {
     ACCULUS_POSE(0),
     ACCULUS_FACE(1),

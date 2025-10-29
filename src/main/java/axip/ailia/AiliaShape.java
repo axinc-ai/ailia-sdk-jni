@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Shape object
+*/
 public class AiliaShape {
     public static final int version = 1;
 

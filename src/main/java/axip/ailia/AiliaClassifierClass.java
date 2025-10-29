@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Classification result object
+*/
 public class AiliaClassifierClass {
     public static final int version = 1;
 

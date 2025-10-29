@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Memory mode for inference
+*/
 public enum AiliaMemoryMode {
     /**
 	 * Do not release the intermediate buffer
@@ -24,6 +27,10 @@ public enum AiliaMemoryMode {
 	 * Infer by sharing the intermediate buffer. When used with {@link #REDUCE_INTERSTAGE}, the sharable intermediate buffer is not opened.
 	 */
 	REUSE_INTERSTAGE(8),
+	/**
+	 * Use memory mapped file due to reduce constant intermediate blobs. Need to call SetTemporaryCachePath in advance.
+	 */
+	REDUCE_CONSTANT_WITH_FILE_MAPPED(16),
 	OPTIMAIZE_DEFAULT(1);
 
     private int value;

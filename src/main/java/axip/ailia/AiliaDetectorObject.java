@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Detection result object
+*/
 public class AiliaDetectorObject {
     public static final int version = 1;
 	/**

@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Network image format
+*/
 public enum AiliaNetworkImageRange {
 	/**
 	 * 0 to 255
@@ -21,7 +24,7 @@ public enum AiliaNetworkImageRange {
 	*/
     SIGNED_FP32  (3),
 	/**
-	 * ImageNet mean&std normalize
+	 * ImageNet mean and std normalize
 	*/
     IMAGENET     (4);
 

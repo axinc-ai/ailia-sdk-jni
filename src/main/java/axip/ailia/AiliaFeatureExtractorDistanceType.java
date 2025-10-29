@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Distance type for feature extractor
+*/
 public enum AiliaFeatureExtractorDistanceType {
 
     L2NORM(0);

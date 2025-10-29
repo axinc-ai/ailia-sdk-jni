@@ -14,7 +14,7 @@ public class AiliaPoseEstimator
 	 * @param netHandle A network instance handle
 	 * @param algorithm {@link AiliaPoseEstimatorAlgorithm}
 	 * @return An estimator instance handle
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native long Create(long netHandle, int algorithm) throws AiliaException;
 
@@ -30,7 +30,7 @@ public class AiliaPoseEstimator
 	 *
 	 * @param handle An estimator instance handle
 	 * @param threshold The detection threshold (for example, 0.1f) (The smaller it is, the easier the detection will be and the more detected objects found.)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void SetThreshold(long handle, float threshold) throws AiliaException;
 
@@ -43,7 +43,7 @@ public class AiliaPoseEstimator
 	 * @param srcWidth Image width
 	 * @param srcHeight Image height
 	 * @param srcFormat Image format ({@link AiliaImageFormat})
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void Compute(long handle, byte[] src, int srcStride, int srcWidth, int srcHeight, int srcFormat) throws AiliaException;
 
@@ -52,7 +52,7 @@ public class AiliaPoseEstimator
 	 *
 	 * @param handle An estimator instance handle
 	 * @return The number of objects. Set to 1 or 0 for human face landmarks.
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native int GetObjectCount(long handle) throws AiliaException;
 
@@ -63,7 +63,7 @@ public class AiliaPoseEstimator
 	 * @param objIndex Object index
 	 * @param version {@link AiliaPoseEstimatorObjectPose#version}
 	 * @return Object information
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native AiliaPoseEstimatorObjectPose GetObjectPose(long handle, int objIndex, int version) throws AiliaException;
 
@@ -74,7 +74,7 @@ public class AiliaPoseEstimator
 	 * @param objIndex Object index
 	 * @param version {@link AiliaPoseEstimatorObjectFace#version}
 	 * @return Object information
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native AiliaPoseEstimatorObjectFace GetObjectFace(long handle, int objIndex, int version) throws AiliaException;
 
@@ -85,7 +85,7 @@ public class AiliaPoseEstimator
 	 * @param objIndex Object index
 	 * @param version {@link AiliaPoseEstimatorObjectUpPose#version}
 	 * @return Object information
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native AiliaPoseEstimatorObjectUpPose GetObjectUpPose(long handle, int objIndex, int version) throws AiliaException;
 }

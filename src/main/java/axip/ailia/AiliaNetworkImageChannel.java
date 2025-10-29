@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Network image format
+*/
 public enum AiliaNetworkImageChannel {
 	/**
 	 * DCYX order

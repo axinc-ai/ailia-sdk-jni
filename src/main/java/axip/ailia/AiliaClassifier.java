@@ -15,7 +15,7 @@ public class AiliaClassifier {
 	 * @param channel The network image channel ({@link AiliaNetworkImageChannel})
 	 * @param range The network image range ({@link AiliaNetworkImageRange})
 	 * @return A handle of classifier instance
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native long Create(long netHandle, int format, int channel, int range) throws AiliaException;
 
@@ -36,7 +36,7 @@ public class AiliaClassifier {
 	 * @param srcHeight Image height
 	 * @param srcFormat Image format ({@link AiliaImageFormat})
 	 * @param maxClassCount The maximum number of classification results
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native void Compute(long handle, byte[] src, int srcStride, int srcWidth, int srcHeight, int srcFormat, int maxClassCount) throws AiliaException;
 
@@ -45,7 +45,7 @@ public class AiliaClassifier {
 	 *
 	 * @param handle A classifier instance handle
 	 * @return The number of classes
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native int GetClassCount(long handle) throws AiliaException;
 
@@ -58,7 +58,7 @@ public class AiliaClassifier {
 	 * @param clsIdx Index of class
 	 * @param version {@link AiliaClassifierClass#version}
 	 * @return Class information
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native AiliaClassifierClass GetClass(long handle, int clsIdx, int version) throws AiliaException;
 }

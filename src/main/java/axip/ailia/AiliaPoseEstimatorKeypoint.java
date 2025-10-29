@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Estimated keypoint objects
+*/
 public class AiliaPoseEstimatorKeypoint
 {
 	/**
