@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Estimated keypoint objects of UpPose
+*/
 public class AiliaPoseEstimatorObjectUpPose
 {
     public static final int version = 1;
@@ -33,7 +36,7 @@ public class AiliaPoseEstimatorObjectUpPose
 	 */
     public float totalScore;
 	/**
-	 * The number of body joint positions properly detected in {@value points}
+	 * The number of body joint positions properly detected in {@link points}
 	 */
 	public int numValidPoints;
 	/**

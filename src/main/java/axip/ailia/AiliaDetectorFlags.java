@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Detection flags
+*/
 public enum AiliaDetectorFlags {
 
     NORMAL(0);

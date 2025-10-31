@@ -21,7 +21,7 @@ public class AiliaFeatureExtractor {
 	 * @param range The network image range ({@link AiliaNetworkImageRange})
 	 * @param layerName The name of the layer corresponding to the feature (fc1 for VGG16 and NULL for the last layer)
 	 * @return A feature extraction instance handle
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native long Create(long netHandle, int format, int channel, int range, String layerName) throws AiliaException;
 
@@ -43,7 +43,7 @@ public class AiliaFeatureExtractor {
 	 * @param srcWidth Image width
 	 * @param srcHeight Image height
 	 * @param srcFormat Image format ({@link AiliaImageFormat})
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native void Compute(long handle, float[] dst, int dstSize, byte[] src, int srcStride, int srcWidth, int srcHeight, int srcFormat) throws AiliaException;
 
@@ -57,7 +57,7 @@ public class AiliaFeatureExtractor {
 	 * @param feature2 The other feature
 	 * @param feature2Size The size of the feature2 (in bytes)
 	 * @return A distance in feature space
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native float Match(long handle, int distanceType, float[] feature1, int feature1Size, float[] feature2, int feature2Size) throws AiliaException;
 }

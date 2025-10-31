@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Exception object
+*/
 public class AiliaException extends Exception {
 	/**
 	 * Successful

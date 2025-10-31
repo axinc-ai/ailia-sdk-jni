@@ -28,6 +28,11 @@ public class AiliaDetector {
     @Deprecated public static final int ALGORITHM_YOLOV4 = 3;
 
 	/**
+	 * @deprecated Please use ({@link AiliaDetectorAlgorithm#YOLOX})
+	 */
+    @Deprecated public static final int ALGORITHM_YOLOX = 4;
+
+	/**
 	 * @deprecated Please use ({@link AiliaDetectorAlgorithm#SSD})
 	 */
     @Deprecated public static final int ALGORITHM_SSD = 8;
@@ -48,7 +53,7 @@ public class AiliaDetector {
 	 * @param category_count The number of detection categories (specify 20 for VOC or 80 for COCO, etc.)
 	 * @param flags Additional flags ({@link AiliaDetectorFlags})
 	 * @return A handle of detector instance
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native long Create(long netHandle, int format, int channel, int range, int algorithm, int category_count, int flags) throws AiliaException;
 
@@ -70,7 +75,7 @@ public class AiliaDetector {
 	 * @param srcFormat Image format ({@link AiliaImageFormat})
 	 * @param threshold The detection threshold (for example, 0.1f) (The smaller it is, the easier the detection will be and the more detected objects found.)
 	 * @param iou Iou threshold (for example, 0.45f) (The smaller it is, the fewer detected objects found, as duplication is not allowed.)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native void Compute(long handle, byte[] src, int srcStride, int srcWidth, int srcHeight, int srcFormat, float threshold, float iou) throws AiliaException;
 
@@ -79,7 +84,7 @@ public class AiliaDetector {
 	 *
 	 * @param handle A detector instance handle
 	 * @return The number of objects
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native int GetObjectCount(long handle) throws AiliaException;
 
@@ -92,7 +97,7 @@ public class AiliaDetector {
 	 * @param objIdx Object index
 	 * @param version {@link AiliaDetectorObject#version}
 	 * @return Object information
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native AiliaDetectorObject GetObject(long handle, int objIdx, int version) throws AiliaException;
 
@@ -101,11 +106,11 @@ public class AiliaDetector {
 	 *
 	 * <p>YoloV2 and other systems perform object detection with multiple detection boxes determined during training. By using this API function to set the shape of the detection box determined during training, correct inferences can be made.
 	 * The {x, y, x, y ...} format is used for anchor storage.
-	 * If {@value anchorsCount} has a value of 5, then anchors is a 10-dimensional array.</p>
+	 * If {@param anchorsCount} has a value of 5, then anchors is a 10-dimensional array.</p>
 	 * @param handle A detector instance handle
 	 * @param anchors The anchor dimensions (the shape, height and width of the detection box)
 	 * @param anchorsCount The number of anchors (half of the anchors array size)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native void SetAnchors(long handle, float[] anchors, int anchorsCount) throws AiliaException;
 
@@ -120,7 +125,7 @@ public class AiliaDetector {
 	 * @param handle A detector instance handle
 	 * @param input_width Width of the model's input image
 	 * @param input_height Height of the model's input image
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
     public static native void SetInputShape(long handle, int input_width, int input_height) throws AiliaException;
 }

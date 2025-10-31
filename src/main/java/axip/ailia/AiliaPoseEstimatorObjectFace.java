@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Estimated keypoint objects of face
+*/
 public class AiliaPoseEstimatorObjectFace
 {
     public static final int version = 1;

@@ -16,8 +16,8 @@ public class AiliaClassifierModel implements AutoCloseable {
 	 * @param format The network image format ({@link AiliaNetworkImageFormat})
 	 * @param channel The network image channel ({@link AiliaNetworkImageChannel})
 	 * @param range The network image range ({@link AiliaNetworkImageRange})
-	 * @see {@link AiliaClassifier#Create(long, int, int, int)}
-	 * @throws AiliaException
+	 * @see AiliaClassifier#Create(long, int, int, int)
+	 * @throws AiliaException Exception
 	 */
     public AiliaClassifierModel(long netHandle, AiliaNetworkImageFormat format, AiliaNetworkImageChannel channel, AiliaNetworkImageRange range) throws AiliaException {
         classifierHandle = AiliaClassifier.Create(netHandle, format.getValue(), channel.getValue(), range.getValue());
@@ -26,7 +26,7 @@ public class AiliaClassifierModel implements AutoCloseable {
 	/**
 	 * Destroys the classifier instance.
 	 *
-	 * @see {@link AiliaClassifier#Destroy(long)}
+	 * @see AiliaClassifier#Destroy(long)
 	 */
     public void close() {
         AiliaClassifier.Destroy(classifierHandle);
@@ -41,8 +41,8 @@ public class AiliaClassifierModel implements AutoCloseable {
 	 * @param srcHeight Image height
 	 * @param srcFormat Image format ({@link AiliaImageFormat})
 	 * @param maxClassCount The maximum number of classification results
-	 * @throws AiliaException
-	 * @see {@link AiliaClassifier#Compute(long, byte[], int, int, int, int, int)}
+	 * @throws AiliaException Exception
+	 * @see AiliaClassifier#Compute(long, byte[], int, int, int, int, int)
 	 */
     public void compute(byte[] src, int srcStride, int srcWidth, int srcHeight, AiliaImageFormat srcFormat, int maxClassCount) throws AiliaException {
         AiliaClassifier.Compute(classifierHandle, src, srcStride, srcWidth, srcHeight, srcFormat.getValue(), maxClassCount);
@@ -52,8 +52,8 @@ public class AiliaClassifierModel implements AutoCloseable {
 	 * Gets the number of classification results.
 	 *
 	 * @return The number of classes
-	 * @throws AiliaException
-	 * @see {@link AiliaClassifier#GetClassCount(long)}
+	 * @throws AiliaException Exception
+	 * @see AiliaClassifier#GetClassCount(long)
 	 */
     public int getClassCount() throws AiliaException {
         return AiliaClassifier.GetClassCount(classifierHandle);
@@ -64,8 +64,8 @@ public class AiliaClassifierModel implements AutoCloseable {
 	 *
 	 * @param index Index of class
 	 * @return Class information
-	 * @throws AiliaException
-	 * @see {@link AiliaClassifier#GetClass(long, int, int)}
+	 * @throws AiliaException Exception
+	 * @see AiliaClassifier#GetClass(long, int, int)
 	 */
     public AiliaClassifierClass getClass(int index) throws AiliaException {
         return AiliaClassifier.GetClass(classifierHandle, index, AiliaClassifierClass.version);

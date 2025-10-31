@@ -48,8 +48,8 @@ public class AiliaPoseEstimatorModel implements AutoCloseable
 	 *
 	 * @param netHandle A network instance handle
 	 * @param algorithm {@link AiliaPoseEstimatorAlgorithm}
-	 * @throws AiliaException
-	 * @see {@link AiliaPoseEstimator#Create(long, int)}
+	 * @throws AiliaException Exception
+	 * @see AiliaPoseEstimator#Create(long, int)
 	 */
 	public AiliaPoseEstimatorModel(long netHandle, AiliaPoseEstimatorAlgorithm algorithm) throws AiliaException {
         estimatorHandle = AiliaPoseEstimator.Create(netHandle, algorithm.getValue());
@@ -64,7 +64,7 @@ public class AiliaPoseEstimatorModel implements AutoCloseable
 	/**
 	 * Destroys the estimator instance.
 	 *
-	 * @see {@link AiliaFeatureExtractor#Destroy(long)}
+	 * @see AiliaFeatureExtractor#Destroy(long)
 	 */
     public void close()
     {
@@ -75,8 +75,8 @@ public class AiliaPoseEstimatorModel implements AutoCloseable
 	 * Set the detection threshold.
 	 *
 	 * @param threshold The detection threshold (for example, 0.1f) (The smaller it is, the easier the detection will be and the more detected objects found.)
-	 * @throws AiliaException
-	 * @see {@link AiliaPoseEstimator#SetThreshold(long, float)}
+	 * @throws AiliaException Exception
+	 * @see AiliaPoseEstimator#SetThreshold(long, float)
 	 */
 	public void setThreshold(float threshold) throws AiliaException
 	{
@@ -91,8 +91,8 @@ public class AiliaPoseEstimatorModel implements AutoCloseable
 	 * @param srcWidth Image width
 	 * @param srcHeight Image height
 	 * @param srcFormat Image format ({@link AiliaImageFormat})
-	 * @throws AiliaException
-	 * @see {@link AiliaPoseEstimator#Compute(long, byte[], int, int, int, int)}
+	 * @throws AiliaException Exception
+	 * @see AiliaPoseEstimator#Compute(long, byte[], int, int, int, int)
 	 */
     public void compute(byte[] src, int srcStride, int srcWidth, int srcHeight, AiliaImageFormat srcFormat) throws AiliaException
     {
@@ -102,8 +102,8 @@ public class AiliaPoseEstimatorModel implements AutoCloseable
 	/**
 	 * Gets the number of detection results.
 	 * @return The number of objects. Set to 1 or 0 for human face landmarks.
-	 * @throws AiliaException
-	 * @see {@link AiliaPoseEstimator#GetObjectCount(long)}
+	 * @throws AiliaException Exception
+	 * @see AiliaPoseEstimator#GetObjectCount(long)
 	 */
     public int getObjectCount() throws AiliaException
     {
@@ -115,8 +115,8 @@ public class AiliaPoseEstimatorModel implements AutoCloseable
 	 *
 	 * @param objIndex Object index
 	 * @return Object information
-	 * @throws AiliaException
-	 * @see {@link AiliaPoseEstimator#GetObjectPose(long, int, int)}
+	 * @throws AiliaException Exception
+	 * @see AiliaPoseEstimator#GetObjectPose(long, int, int)
 	 */
     public AiliaPoseEstimatorObjectPose getObjectPose(int objIndex) throws AiliaException
     {
@@ -128,8 +128,8 @@ public class AiliaPoseEstimatorModel implements AutoCloseable
 	 *
 	 * @param objIndex Object index
 	 * @return Object information
-	 * @throws AiliaException
-	 * @see {@link AiliaPoseEstimator#GetObjectFace(long, int, int)}
+	 * @throws AiliaException Exception
+	 * @see AiliaPoseEstimator#GetObjectFace(long, int, int)
 	 */
     public AiliaPoseEstimatorObjectFace getObjectFace(int objIndex) throws AiliaException
     {
@@ -141,8 +141,8 @@ public class AiliaPoseEstimatorModel implements AutoCloseable
 	 *
 	 * @param objIndex Object index
 	 * @return Object information
-	 * @throws AiliaException
-	 * @see {@link AiliaPoseEstimator#GetObjectUpPose(long, int, int)}
+	 * @throws AiliaException Exception
+	 * @see AiliaPoseEstimator#GetObjectUpPose(long, int, int)
 	 */
     public AiliaPoseEstimatorObjectUpPose getObjectUpPose(int objIndex) throws AiliaException
     {

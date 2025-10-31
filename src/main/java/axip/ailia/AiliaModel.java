@@ -16,7 +16,7 @@ public class AiliaModel implements AutoCloseable {
 	/**
 	 * Gets the available computational environments.
 	 * @return List of Environment
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	static public List<AiliaEnvironment> getEnvironments() throws AiliaException {
 		int len = Ailia.GetEnvironmentCount();
@@ -34,8 +34,8 @@ public class AiliaModel implements AutoCloseable {
 	 * @param reduceInterstage Release intermediate buffer during inference
 	 * @param reuseInterstage Infer by sharing the intermediate buffer.
 	 * @return Enum set of {@link AiliaMemoryMode}
-	 * @see {@link Ailia#SetMemoryMode(long, int)}
-	 * @throws AiliaException
+	 * @see Ailia#SetMemoryMode(long, int)
+	 * @throws AiliaException Exception
 	 */
 	static public EnumSet<AiliaMemoryMode> getMemoryMode(boolean reduceConstant, boolean ignoreInputWithInitializer, boolean reduceInterstage, boolean reuseInterstage) throws AiliaException {
 		EnumSet<AiliaMemoryMode> flag = EnumSet.noneOf(AiliaMemoryMode.class);
@@ -54,16 +54,22 @@ public class AiliaModel implements AutoCloseable {
 		Ailia.SetMemoryMode(netHandle, mode);
 	}
 
-	private void init(int envId, int numThread, EnumSet<AiliaMemoryMode> memoryMode, byte[] streamData, byte[] weightData) throws AiliaException {
+	private void DisableLayerFusion() throws AiliaException {
+		Ailia.DisableLayerFusion(netHandle);
+        }
+
+	private void init(int envId, int numThread, EnumSet<AiliaMemoryMode> memoryMode, boolean layerFusion, byte[] streamData, byte[] weightData) throws AiliaException {
 		netHandle = Ailia.Create(envId, numThread);
 		this.setMemoryMode(memoryMode);
+		if (!layerFusion) this.DisableLayerFusion();
 		Ailia.OpenStreamMem(netHandle, streamData, streamData.length);
 		Ailia.OpenWeightMem(netHandle, weightData, weightData.length);
 	}
 
-	private void init(int envId, int numThread, EnumSet<AiliaMemoryMode> memoryMode, String streamPath, String weightPath) throws AiliaException {
+	private void init(int envId, int numThread, EnumSet<AiliaMemoryMode> memoryMode, boolean layerFusion, String streamPath, String weightPath) throws AiliaException {
 		netHandle = Ailia.Create(envId, numThread);
 		this.setMemoryMode(memoryMode);
+		if (!layerFusion) this.DisableLayerFusion();
 		Ailia.OpenStreamFile(netHandle, streamPath);
 		Ailia.OpenWeightFile(netHandle, weightPath);
 	}
@@ -75,13 +81,13 @@ public class AiliaModel implements AutoCloseable {
 	 * @param numThread The upper limit on the number of threads
 	 * @param streamData An array of the data in the protobuf file
 	 * @param weightData An array of the data in the protobuf/onnx file
-	 * @throws AiliaException
-	 * @see {@link Ailia#Create(int, int)}
-	 * @see {@link Ailia#OpenStreamMem(long, byte[], int)}
-	 * @see {@link Ailia#OpenWeightMem(long, byte[], int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#Create(int, int)
+	 * @see Ailia#OpenStreamMem(long, byte[], int)
+	 * @see Ailia#OpenWeightMem(long, byte[], int)
 	 */
 	public AiliaModel(int envId, int numThread, byte[] streamData, byte[] weightData) throws AiliaException {
-		init(envId, numThread, EnumSet.of(AiliaMemoryMode.OPTIMAIZE_DEFAULT), streamData, weightData);
+		init(envId, numThread, EnumSet.of(AiliaMemoryMode.OPTIMAIZE_DEFAULT), true, streamData, weightData);
 	}
 
 	/**
@@ -91,13 +97,13 @@ public class AiliaModel implements AutoCloseable {
 	 * @param numThread The upper limit on the number of threads
 	 * @param streamPath The path name to the prototxt file
 	 * @param weightPath The path name to the protobuf/onnx file
-	 * @throws AiliaException
-	 * @see {@link Ailia#Create(int, int)}
-	 * @see {@link Ailia#OpenStreamFile(long, String)}
-	 * @see {@link Ailia#OpenWeightFile(long, String)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#Create(int, int)
+	 * @see Ailia#OpenStreamFile(long, String)
+	 * @see Ailia#OpenWeightFile(long, String)
 	 */
 	public AiliaModel(int envId, int numThread, String streamPath, String weightPath) throws AiliaException {
-		init(envId, numThread, EnumSet.of(AiliaMemoryMode.OPTIMAIZE_DEFAULT), streamPath, weightPath);
+		init(envId, numThread, EnumSet.of(AiliaMemoryMode.OPTIMAIZE_DEFAULT), true, streamPath, weightPath);
 	}
 
 	/**
@@ -108,13 +114,13 @@ public class AiliaModel implements AutoCloseable {
 	 * @param memoryMode Memory mode (Calucurate by {@link #getMemoryMode(boolean, boolean, boolean, boolean)})
 	 * @param streamData An array of the data in the protobuf file
 	 * @param weightData An array of the data in the protobuf/onnx file
-	 * @throws AiliaException
-	 * @see {@link Ailia#Create(int, int)}
-	 * @see {@link Ailia#OpenStreamMem(long, byte[], int)}
-	 * @see {@link Ailia#OpenWeightMem(long, byte[], int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#Create(int, int)
+	 * @see Ailia#OpenStreamMem(long, byte[], int)
+	 * @see Ailia#OpenWeightMem(long, byte[], int)
 	 */
 	public AiliaModel(int envId, int numThread, EnumSet<AiliaMemoryMode> memoryMode, byte[] streamData, byte[] weightData) throws AiliaException {
-		init(envId, numThread, memoryMode, streamData, weightData);
+		init(envId, numThread, memoryMode, true, streamData, weightData);
 	}
 
 	/**
@@ -125,13 +131,49 @@ public class AiliaModel implements AutoCloseable {
 	 * @param memoryMode Memory mode (Calucurate by {@link #getMemoryMode(boolean, boolean, boolean, boolean)})
 	 * @param streamPath The path name to the prototxt file
 	 * @param weightPath The path name to the protobuf/onnx file
+	 * @throws AiliaException Exception
+	 * @see Ailia#Create(int, int)
+	 * @see Ailia#OpenStreamFile(long, String)
+	 * @see Ailia#OpenWeightFile(long, String)
+	 */
+	public AiliaModel(int envId, int numThread, EnumSet<AiliaMemoryMode> memoryMode, String streamPath, String weightPath) throws AiliaException {
+		init(envId, numThread, memoryMode, true, streamPath, weightPath);
+	}
+
+	/**
+	 * Constructor
+	 *
+	 * @param envId The ID of the inference backend used for computation (obtained by {@link #getEnvironments()})
+	 * @param numThread The upper limit on the number of threads
+	 * @param memoryMode Memory mode (Calucurate by {@link #getMemoryMode(boolean, boolean, boolean, boolean)})
+	 * @param layerFusion Enable or disable layer fusion optimization
+	 * @param streamData An array of the data in the protobuf file
+	 * @param weightData An array of the data in the protobuf/onnx file
+	 * @throws AiliaException
+	 * @see {@link Ailia#Create(int, int)}
+	 * @see {@link Ailia#OpenStreamMem(long, byte[], int)}
+	 * @see {@link Ailia#OpenWeightMem(long, byte[], int)}
+	 */
+	public AiliaModel(int envId, int numThread, EnumSet<AiliaMemoryMode> memoryMode, boolean layerFusion, byte[] streamData, byte[] weightData) throws AiliaException {
+		init(envId, numThread, memoryMode, layerFusion, streamData, weightData);
+	}
+
+	/**
+	 * Constructor
+	 *
+	 * @param envId The ID of the inference backend used for computation (obtained by {@link #getEnvironments()})
+	 * @param numThread The upper limit on the number of threads
+	 * @param memoryMode Memory mode (Calucurate by {@link #getMemoryMode(boolean, boolean, boolean, boolean)})
+	 * @param layerFusion Enable or disable layer fusion optimization
+	 * @param streamPath The path name to the prototxt file
+	 * @param weightPath The path name to the protobuf/onnx file
 	 * @throws AiliaException
 	 * @see {@link Ailia#Create(int, int)}
 	 * @see {@link Ailia#OpenStreamFile(long, String)}
 	 * @see {@link Ailia#OpenWeightFile(long, String)}
 	 */
-	public AiliaModel(int envId, int numThread, EnumSet<AiliaMemoryMode> memoryMode, String streamPath, String weightPath) throws AiliaException {
-		init(envId, numThread, memoryMode, streamPath, weightPath);
+	public AiliaModel(int envId, int numThread, EnumSet<AiliaMemoryMode> memoryMode, boolean layerFusion, String streamPath, String weightPath) throws AiliaException {
+		init(envId, numThread, memoryMode, layerFusion, streamPath, weightPath);
 	}
 
 	/**
@@ -141,8 +183,8 @@ public class AiliaModel implements AutoCloseable {
 	 * @param channel The network image channel ({@link AiliaNetworkImageChannel})
 	 * @param range The network image range ({@link AiliaNetworkImageRange})
 	 * @return The instance of a classfier wrapper class.
-	 * @throws AiliaException
-	 * @see {@link AiliaClassifier#Create(long, int, int, int)}
+	 * @throws AiliaException Exception
+	 * @see AiliaClassifier#Create(long, int, int, int)
 	 */
 	public AiliaClassifierModel createClassifier(AiliaNetworkImageFormat format, AiliaNetworkImageChannel channel, AiliaNetworkImageRange range) throws AiliaException {
 		return new AiliaClassifierModel(netHandle, format, channel, range);
@@ -158,8 +200,8 @@ public class AiliaModel implements AutoCloseable {
 	 * @param categoryCount The number of detection categories (specify 20 for VOC or 80 for COCO, etc.)
 	 * @param flags Additional flags {@link AiliaDetectorFlags}
 	 * @return The instance of a detector wrapper class.
-	 * @throws AiliaException
-	 * @see {@link AiliaDetector#Create(long, int, int, int, int, int, int)}
+	 * @throws AiliaException Exception
+	 * @see AiliaDetector#Create(long, int, int, int, int, int, int)
 	 */
 	public AiliaDetectorModel createDetector(AiliaNetworkImageFormat format, AiliaNetworkImageChannel channel, AiliaNetworkImageRange range, AiliaDetectorAlgorithm algorithm, int categoryCount, EnumSet<AiliaDetectorFlags> flags) throws AiliaException {
 		return new AiliaDetectorModel(netHandle, format, channel, range, algorithm, categoryCount, flags);
@@ -180,8 +222,8 @@ public class AiliaModel implements AutoCloseable {
 	 * @param range The network image range ({@link AiliaNetworkImageRange})
 	 * @param layerName The name of the layer corresponding to the feature (fc1 for VGG16 and NULL for the last layer)
 	 * @return The instance of a feature extractor wrapper class.
-	 * @throws AiliaException
-	 * @see {@link AiliaFeatureExtractor#Create(long, int, int, int, String)}
+	 * @throws AiliaException Exception
+	 * @see AiliaFeatureExtractor#Create(long, int, int, int, String)
 	 */
 	public AiliaFeatureExtractorModel createFeatureExtractor(AiliaNetworkImageFormat format, AiliaNetworkImageChannel channel, AiliaNetworkImageRange range, String layerName) throws AiliaException {
 		return new AiliaFeatureExtractorModel(netHandle, format, channel, range, layerName);
@@ -192,8 +234,8 @@ public class AiliaModel implements AutoCloseable {
 	 *
 	 * @param algorithm {@link AiliaPoseEstimatorAlgorithm}
 	 * @return The instance of pose estimtor wrapper class.
-	 * @throws AiliaException
-	 * @see {@link AiliaPoseEstimator#Create(long, int)}
+	 * @throws AiliaException Exception
+	 * @see AiliaPoseEstimator#Create(long, int)
 	 */
 	public AiliaPoseEstimatorModel createPoseEstimator(AiliaPoseEstimatorAlgorithm algorithm) throws AiliaException {
 		return new AiliaPoseEstimatorModel(netHandle, algorithm);
@@ -213,8 +255,8 @@ public class AiliaModel implements AutoCloseable {
 	 * @param destSize The size of the dest (in byte)
 	 * @param src The input is stored as float data in the order of the inference data X, Y, Z, and W. The input has the same size as the network file inputSize.
 	 * @param srcSize The size of the src (in byte)
-	 * @throws AiliaException
-	 * @see {@link Ailia#Predict(long, float[], int, float[], int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#Predict(long, float[], int, float[], int)
 	 */
 	public void predict(float[] dest, int destSize, float[] src, int srcSize) throws AiliaException {
 		Ailia.Predict(netHandle,dest,destSize,src,srcSize);
@@ -231,8 +273,8 @@ public class AiliaModel implements AutoCloseable {
 	 * Changes the shape of the input data during inference.
 	 *
 	 * @param shape Shape information for the input data
-	 * @throws AiliaException
-	 * @see {@link Ailia#SetInputShape(long, AiliaShape, int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#SetInputShape(long, AiliaShape, int)
 	 */
 	public void setInputShape(AiliaShape shape) throws AiliaException {
 		Ailia.SetInputShape(netHandle, shape, AiliaShape.version);
@@ -242,8 +284,8 @@ public class AiliaModel implements AutoCloseable {
 	 * Changes the shape of the input data during inference.
 	 *
 	 * @param shape An array of shape
-	 * @throws AiliaException
-	 * @see {@link Ailia#SetInputShapeND(long, int[], int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#SetInputShapeND(long, int[], int)
 	 */
 	public void setInputShapeND(int[] shape) throws AiliaException {
 		Ailia.SetInputShapeND(netHandle, shape, shape.length);
@@ -253,8 +295,8 @@ public class AiliaModel implements AutoCloseable {
 	 * Gets the shape of the input data during inference.
 	 *
 	 * @return The shape of the input data
-	 * @throws AiliaException
-	 * @see {@link Ailia#GetInputShape(long, int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#GetInputShape(long, int)
 	 */
 	public AiliaShape getInputShape() throws AiliaException {
 		return Ailia.GetInputShape(netHandle, AiliaShape.version);
@@ -264,9 +306,9 @@ public class AiliaModel implements AutoCloseable {
 	 * Gets the shape of the input data during inference.
 	 *
 	 * @return The array of shape
-	 * @throws AiliaException
-	 * @see {@link Ailia#GetInputDim(long)}
-	 * @see {@link Ailia#GetInputShapeND(long, int[], int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#GetInputDim(long)
+	 * @see Ailia#GetInputShapeND(long, int[], int)
 	 */
 	public int[] getInputShapeND() throws AiliaException {
 		int dim = Ailia.GetInputDim(netHandle);
@@ -281,8 +323,8 @@ public class AiliaModel implements AutoCloseable {
 	 * @param shape New shape of the blob
 	 * @param blobIndex Index referencing the blob to reshape
 	 * @param version Shape version({@link AiliaShape#version})
-	 * @throws AiliaException
-	 * @see {@link Ailia#SetInputBlobShape(long, AiliaShape, int, int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#SetInputBlobShape(long, AiliaShape, int, int)
 	 */
 	public void setInputBlobShape(AiliaShape shape, int blobIndex, int version) throws AiliaException {
 		Ailia.SetInputBlobShape(netHandle, shape, blobIndex, version);
@@ -293,8 +335,8 @@ public class AiliaModel implements AutoCloseable {
 	 *
 	 * @param shape The array of the new shape.
 	 * @param blobIndex Index referencing the blob to reshape
-	 * @throws AiliaException
-	 * @see {@link Ailia#SetInputBlobShapeND(long, int[], int, int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#SetInputBlobShapeND(long, int[], int, int)
 	 */
 	public void setInputBlobShapeND(int[] shape, int blobIndex) throws AiliaException {
 		Ailia.SetInputBlobShapeND(netHandle, shape, shape.length, blobIndex);
@@ -305,8 +347,8 @@ public class AiliaModel implements AutoCloseable {
 	 *
 	 * @param blobIndex Index referencing the blob to reshape
 	 * @return The shape of the internal data (blob).
-	 * @throws AiliaException
-	 * @see {@link Ailia#GetBlobShape(long, int, int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#GetBlobShape(long, int, int)
 	 */
 	public AiliaShape getBlobShape(int blobIndex) throws AiliaException {
 		return Ailia.GetBlobShape(netHandle, blobIndex, AiliaShape.version);
@@ -316,8 +358,8 @@ public class AiliaModel implements AutoCloseable {
 	 * Gets the shape of the internal data (blob) during inference.
 	 * @param blobIndex Index referencing the blob to reshape
 	 * @return The array of shape
-	 * @throws AiliaException
-	 * @see {@link Ailia#GetBlobShapeND(long, int[], int, int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#GetBlobShapeND(long, int[], int, int)
 	 */
 	public int[] getBlobShapeND(int blobIndex) throws AiliaException {
 		int dim = Ailia.GetBlobDim(netHandle, blobIndex);
@@ -330,8 +372,8 @@ public class AiliaModel implements AutoCloseable {
 	 * Gets the shape of the output data during inference.
 	 *
 	 * @return The shape of the output.
-	 * @throws AiliaException
-	 * @see {@link Ailia#GetOutputShape(long, int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#GetOutputShape(long, int)
 	 */
 	public AiliaShape getOutputShape() throws AiliaException {
 		return Ailia.GetOutputShape(netHandle, AiliaShape.version);
@@ -341,8 +383,8 @@ public class AiliaModel implements AutoCloseable {
 	 * Gets the shape of the output data during inference.
 	 *
 	 * @return The array of the shape
-	 * @throws AiliaException
-	 * @see {@link Ailia#GetOutputShapeND(long, int[], int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#GetOutputShapeND(long, int[], int)
 	 */
 	public int[] getOutputShapeND() throws AiliaException {
 		int dim = Ailia.GetOutputDim(netHandle);
@@ -355,8 +397,8 @@ public class AiliaModel implements AutoCloseable {
 	 * Get the number of input data blobs.
 	 *
 	 * @return The number of input blobs
-	 * @throws AiliaException
-	 * @see {@link Ailia#GetInputBlobCount(long)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#GetInputBlobCount(long)
 	 */
 	public int getInputBlobCount() throws AiliaException {
 		return Ailia.GetInputBlobCount(netHandle);
@@ -367,8 +409,8 @@ public class AiliaModel implements AutoCloseable {
 	 *
 	 * @param inputBlobIndex Index among the input blobs (between 0 and {@link #getInputBlobCount()}-1)
 	 * @return Index of the blob
-	 * @throws AiliaException
-	 * @see {@link Ailia#GetBlobIndexByInputIndex(long, int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#GetBlobIndexByInputIndex(long, int)
 	 */
 	public int getBlobIndexByInputIndex(int inputBlobIndex) throws AiliaException {
 		return Ailia.GetBlobIndexByInputIndex(netHandle, inputBlobIndex);
@@ -378,8 +420,8 @@ public class AiliaModel implements AutoCloseable {
 	 * Get the number of output data blobs.
 	 *
 	 * @return The number of output blobs
-	 * @throws AiliaException
-	 * @see {@link Ailia#GetOutputBlobCount(long)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#GetOutputBlobCount(long)
 	 */
 	public int getOutputBlobCount() throws AiliaException {
 		return Ailia.GetOutputBlobCount(netHandle);
@@ -390,8 +432,8 @@ public class AiliaModel implements AutoCloseable {
 	 *
 	 * @param outputBlobIndex Index among output blobs (between 0 and {@link #getOutputBlobCount()}-1)
 	 * @return Blob index
-	 * @throws AiliaException
-	 * @see {@link Ailia#GetBlobIndexByOutputIndex(long, int)}
+	 * @throws AiliaException Exception
+	 * @see Ailia#GetBlobIndexByOutputIndex(long, int)
 	 */
 	public int getBlobIndexByOutputIndex(int outputBlobIndex) throws AiliaException {
 		return Ailia.GetBlobIndexByOutputIndex(netHandle, outputBlobIndex);
@@ -399,7 +441,7 @@ public class AiliaModel implements AutoCloseable {
 
 	/**
 	 * It destroys the network instance.
-	 * @see {@link Ailia#Destroy(long)}
+	 * @see Ailia#Destroy(long)
 	 */
 	public void close() {
 		Ailia.Destroy(netHandle);
@@ -414,8 +456,18 @@ public class AiliaModel implements AutoCloseable {
 	}
 
 	/**
+	 * Copy blobs between specified models.
+	 * @param dstBlobIndex The index of destination blob
+	 * @param srcBlobIndex The index of source blob
+	 * @param srcNet The AiliaModel object that contains source blob. If specify null, then use this object as srcNet.
+	 */
+	public void copyBlob(int dstBlobIndex, int srcBlobIndex, AiliaModel srcNet) throws AiliaException {
+		Ailia.CopyBlobData(netHandle, dstBlobIndex, srcNet != null ? srcNet.netHandle : netHandle, srcBlobIndex);
+	}
+
+	/**
 	 * Performs the inferences
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public void update() throws AiliaException {
 		Ailia.Update(netHandle);
@@ -424,11 +476,10 @@ public class AiliaModel implements AutoCloseable {
 	/**
 	 * Set the input blob data.
 	 *
-	 * @param shape Shape information for the input data
 	 * @param src The input is stored as float data in the order of the inference data X, Y, Z, and W. The input has the same size as the network file inputSize.
 	 * @param srcSize The size of the src (in byte)
-	 * @param idx The input idx of input blob
-	 * @throws AiliaException
+	 * @param idx The blob idx
+	 * @throws AiliaException Exception
 	 */
 	public void setInputBlobData(float[] src, int srcSize, int idx) throws AiliaException {
 		Ailia.SetInputBlobData(netHandle, src, srcSize, idx);
@@ -439,22 +490,33 @@ public class AiliaModel implements AutoCloseable {
 	 *
 	 * @param dest The result is stored in the inference result destination buffer as float data in the order of X, Y, Z, and W. The buffer has the same size as the network file outputSize.
 	 * @param destSize The size of the dest (in byte)
-	 * @param idx The input idx of blob
-	 * @throws AiliaException
+	 * @param idx The blob idx
+	 * @throws AiliaException Exception
 	 */
 	public void getBlobData(float[] dest, int destSize, int idx) throws AiliaException {
 		Ailia.GetBlobData(netHandle, dest, destSize, idx);
 	}
 
 	/**
-	 * Get the error detail
+	 * Set the profile mode.
 	 *
-	 * @param dest The result is stored in the inference result destination buffer as float data in the order of X, Y, Z, and W. The buffer has the same size as the network file outputSize.
-	 * @param destSize The size of the dest (in byte)
-	 * @param idx The input idx of blob
-	 * @throws AiliaException
+	 * <p> Change the profile mode.
+	 * If a value other than {@link AiliaProfileMode#PROFILE_DISABLE} is specified,
+	 * the profile data is added to Summary
+	 * @param profileMode Profile mode (Default :{@link AiliaProfileMode#PROFILE_DISABLE})
+	 * @throws AiliaException Exception
 	 */
-	public String getErrorDetail() throws AiliaException {
-		return Ailia.GetErrorDetail(netHandle);
+	public void setProfileMode(AiliaProfileMode profileMode) throws AiliaException {
+		Ailia.SetProfileMode(netHandle, profileMode.getValue());
+	}
+
+	/**
+	 * Shows the name and shape of each blob.
+	 *
+	 * @return The summary string
+	 * @throws AiliaException Exception
+	 */
+	public String getSummary() throws AiliaException{
+		return Ailia.Summary(netHandle);
 	}
 }

@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Image format of input image
+*/
 public enum AiliaImageFormat {
 	/**
 	 * RGBA order

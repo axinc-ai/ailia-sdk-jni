@@ -3,6 +3,9 @@
 
 package axip.ailia;
 
+/**
+* Status object
+*/
 public enum AiliaStatus {
 	/**
      * Successful

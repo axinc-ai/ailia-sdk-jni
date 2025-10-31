@@ -1,5 +1,5 @@
-/* Copyright 2018-2021 AXELL CORPORATION */
-/* Updated July 28, 2021*/
+/* Copyright 2018-2023 AXELL CORPORATION */
+/* Updated May 25, 2023 */
 
 package axip.ailia;
 /**
@@ -41,6 +41,11 @@ public class Ailia {
 	 */
 	@Deprecated public static final int MEMORY_REUSE_INTERSTAGE                       = 8;
 	/**
+	 * Use memory mapped file due to reduce constant intermediate blobs. Need to call SetTemporaryCachePath in advance.
+	 * @deprecated Please use {@link AiliaMemoryMode#REDUCE_CONSTANT_WITH_FILE_MAPPED}
+	 */
+	@Deprecated public static final int AILIA_MEMORY_REDUCE_CONSTANT_WITH_FILE_MAPPED = 16;
+	/**
 	 *
 	 * @deprecated Please use {@link AiliaMemoryMode#OPTIMAIZE_DEFAULT}
 	 */
@@ -54,7 +59,7 @@ public class Ailia {
 	 * @param envId The ID of the inference backend used for computation (obtained by {@link #GetEnvironment(int, int)}). It is selected automatically if {@link #ENVIRONMENT_ID_AUTO} is specified.
 	 * @param numThread The upper limit on the number of threads (It is set automatically if {@link #MULTITHREAD_AUTO} is specified.)
 	 * @return Handle of network instance.
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native long Create(int envId, int numThread) throws AiliaException;
 
@@ -64,7 +69,7 @@ public class Ailia {
 	 * <p>This function reads the network instance from a file and initializes it.</p>
 	 * @param handle A network instance handle
 	 * @param path The path name to the prototxt file
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void OpenStreamFile(long handle, String path) throws AiliaException;
 
@@ -75,7 +80,7 @@ public class Ailia {
 	 * @param handle A network instance handle
 	 * @param buf An array of the data in the protobuf file
 	 * @param buf_size The data size of the prototxt file
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void OpenStreamMem(long handle, byte[] buf, int buf_size) throws AiliaException;
 
@@ -85,7 +90,7 @@ public class Ailia {
 	 * <p>This function reads weights into the network instance from a file.</p>
 	 * @param handle A network instance handle
 	 * @param path The path name to the protobuf/onnx file
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void OpenWeightFile(long handle, String path) throws AiliaException;
 
@@ -96,7 +101,7 @@ public class Ailia {
 	 * @param handle A network instance handle
 	 * @param buf An array of the data in the protobuf/onnx file
 	 * @param buf_size The data size of the protobuf/onnx file
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void OpenWeightMem(long handle, byte[] buf, int buf_size) throws AiliaException;
 
@@ -117,7 +122,7 @@ public class Ailia {
 	 * @param handle A network instance handle
 	 * @param shape Shape information for the input data
 	 * @param version Shape version({@link AiliaShape#version})
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void SetInputShape(long handle, AiliaShape shape, int version) throws AiliaException;
 
@@ -130,7 +135,7 @@ public class Ailia {
 	 * @param handle A network instance handle
 	 * @param shape An array of shape
 	 * @param dim The size of shape.
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void SetInputShapeND(long handle, int[] shape, int dim) throws AiliaException;
 
@@ -142,7 +147,7 @@ public class Ailia {
 	 * @param handle A network instance handle
 	 * @param version Shape version({@link AiliaShape#version})
 	 * @return The shape of the input data
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native AiliaShape GetInputShape(long handle, int version) throws AiliaException;
 
@@ -171,7 +176,7 @@ public class Ailia {
 	 * @param handle A network instance handle
 	 * @param version Shape version({@link AiliaShape#version})
 	 * @return The shape of the output.
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native AiliaShape GetOutputShape(long handle, int version) throws AiliaException;
 
@@ -200,7 +205,7 @@ public class Ailia {
 	 * @param destSize The size of the dest (in byte)
 	 * @param src The input is stored as float data in the order of the inference data X, Y, Z, and W. The input has the same size as the network file inputSize.
 	 * @param srcSize The size of the src (in byte)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void Predict(long handle, float[] dest, int destSize, float[] src, int srcSize) throws AiliaException;
 
@@ -209,7 +214,7 @@ public class Ailia {
 	 *
 	 * @param handle A network instance handle
 	 * @return The number of blobs
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native int GetBlobCount(long handle) throws AiliaException;
 
@@ -220,7 +225,7 @@ public class Ailia {
 	 * @param blobIdx The index of the blob (0 to {@link #GetBlobCount(long)}-1)
 	 * @param version Shape version({@link AiliaShape#version})
 	 * @return The shape of the internal data (blob).
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native AiliaShape GetBlobShape(long handle, int blobIdx, int version) throws AiliaException;
 
@@ -250,7 +255,7 @@ public class Ailia {
 	 * @param dest The result is stored in the inference result destination buffer as float data in the order of X, Y, Z, and W.
 	 * @param destSize The size of the dest (in byte)
 	 * @param blobIdx The index of the blob (0 to {@link #GetBlobCount(long)}-1)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void GetBlobData(long handle, float[] dest, int destSize, int blobIdx) throws AiliaException;
 
@@ -260,7 +265,7 @@ public class Ailia {
 	 * @param handle A network instance handle
 	 * @param name The name of the blob to search for
 	 * @return The index of the blob (0 to {@link #GetBlobCount(long)}-1)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native int FindBlobIndexByName(long handle, String name) throws AiliaException;
 
@@ -270,7 +275,7 @@ public class Ailia {
 	 * @param handle A network instance handle
 	 * @param blobIdx The index of the blob (0 to {@link #GetBlobCount(long)}-1)
 	 * @return The blob name
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native String FindBlobNameByIndex(long handle, int blobIdx) throws AiliaException;
 
@@ -279,7 +284,7 @@ public class Ailia {
 	 *
 	 * @param handle A network instance handle
 	 * @return The summary string
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native String Summary(long handle) throws AiliaException;
 
@@ -288,7 +293,7 @@ public class Ailia {
 	 *
 	 * @param handle A network instance handle
 	 * @return The number of input blobs
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native int GetInputBlobCount(long handle) throws AiliaException;
 
@@ -298,7 +303,7 @@ public class Ailia {
 	 * @param handle A network instance handle
 	 * @param inputBlobIdx Index among the input blobs (between 0 and {@link #GetInputBlobCount(long)}-1)
 	 * @return Index of the blob (between 0 and {@link #GetBlobCount(long)}-1)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native int GetBlobIndexByInputIndex(long handle, int inputBlobIdx) throws AiliaException;
 
@@ -310,7 +315,7 @@ public class Ailia {
 	 * @param src　The inference data is stored as float data in the order of X, Y, Z, and W.
 	 * @param srcSize The size of the inference data (in byte)
 	 * @param blobIdx The index of the blob for input
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void SetInputBlobData(long handle, float[] src, int srcSize, int blobIdx) throws AiliaException;
 
@@ -324,7 +329,7 @@ public class Ailia {
 	 * @param blobIdx Index referencing the blob to reshape
 	 * @param version Shape version({@link AiliaShape#version})
 	 * @see #SetInputShape(long, AiliaShape, int)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void SetInputBlobShape(long handle, AiliaShape shape, int blobIdx, int version) throws AiliaException;
 
@@ -337,9 +342,20 @@ public class Ailia {
 	 * @param dim The size of shape
 	 * @param blobIdx Index referencing the blob to reshape
 	 * @see #SetInputShapeND(long, int[], int)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void SetInputBlobShapeND(long handle, int[] shape, int dim, int blobIdx) throws AiliaException;
+
+	/**
+	 * Perform copies between blobs that specified.
+	 *
+	 * @param dstHandle A network instance handle that contains destination blob
+	 * @param dstBlobIdx A network instance handle The index of destination blob
+	 * @param srcHandle A network instance handle that contains source blob
+	 * @param srcBlobIdx A network instance handle The index of source blob
+	 * @throws AiliaException Exception
+	 */
+	public static native void CopyBlobData(long dstHandle, int dstBlobIdx, long srcHandle, int srcBlobIdx) throws AiliaException;
 
 	/**
 	 * Makes inferences with the input data specified in advance.
@@ -347,7 +363,7 @@ public class Ailia {
 	 * <p>This function is used when, for example, the input is provided with {@link #SetInputBlobData(long, float[], int, int)}.
 	 * Get the inference result with  {@link #GetBlobData(long, float[], int, int)}</p>
 	 * @param handle A network instance handle
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void Update(long handle) throws AiliaException;
 
@@ -356,7 +372,7 @@ public class Ailia {
 	 *
 	 * @param handle A network instance handle
 	 * @return The number of output blobs
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native int GetOutputBlobCount(long handle) throws AiliaException;
 
@@ -365,7 +381,7 @@ public class Ailia {
 	 * @param handle A network instance handle
 	 * @param outputBlobIdx Index among output blobs (between 0 and {@link #GetOutputBlobCount(long)}-1)
 	 * @return Blob index (between 0 and {@link #GetBlobCount(long)}-1)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native int GetBlobIndexByOutputIndex(long handle, int outputBlobIdx) throws AiliaException;
 
@@ -375,11 +391,10 @@ public class Ailia {
 	 * <p>This system uses the specified cache directory to generate and store machine code optimized for each inference backend.
 	 * Call only once at the start of execution of ailia. It ignores any second and subsequent calls, and automatically returns success.
 	 * There is no particular problem if it is called from multiple threads, as it provides exclusive control internally.
-	 * Some functions, such as RenderScript in an Android environment, cannot be used until this API function is called.
-	 * Specify the file path obtained by {@link android.content.Context#getCacheDir()} for cache_dir.
-	 * You cannot specify the path to external storage due to Permission restrictions from RenderScript.</p>
+	 * Some functions, such as Vulkan shader cache, cannot be used until this API function is called.
+	 * Specify the file path obtained by android.content.Context#getCacheDir() for cache_dir.
 	 * @param cache_path Temporary cache directory
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void SetTemporaryCachePath(String cache_path) throws AiliaException;
 
@@ -387,7 +402,7 @@ public class Ailia {
 	 * Gets the number of available computational environments (CPU, GPU).
 	 *
 	 * @return The number of computational environment information
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native int GetEnvironmentCount() throws AiliaException;
 
@@ -397,7 +412,7 @@ public class Ailia {
 	 * @param env_id The index of the computational environment information (0 to {@link #GetEnvironmentCount()}-1)
 	 * @param version {@link AiliaEnvironment#version}
 	 * @return The computational environment information (valid until the AILIANetwork instance is destroyed)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native AiliaEnvironment GetEnvironment(int env_id, int version) throws AiliaException;
 
@@ -407,29 +422,50 @@ public class Ailia {
 	 * @param handle A network instance handle
 	 * @param version {@link AiliaEnvironment#version}
 	 * @return The computational environment information (valid until the AILIANetwork instance is destroyed)
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native AiliaEnvironment GetSelectedEnvironment(long handle, int version) throws AiliaException;
 
 	/**
 	 * Set the memory usage policy for inference
 	 *
-	 * <p> hange the memory usage policy.
+	 * <p> Change the memory usage policy.
 	 * If a value other than {@link #MEMORY_NO_OPTIMIZATION} is specified,
 	 * the intermediate buffer secured during inference will be released, so the memory usage during inference can be reduced.
 	 * Must be specified immediately after ailiaCreate. It cannot be changed after calling ailiaOpen.
 	 * If you specify to release the intermediate buffer, calling {@link #GetBlobData(long, float[], int, int)} for the corresponding blob will thrown {@link AiliaException}.</p>
 	 * @param handle A network instance handle
 	 * @param mode Memory mode (Multiple specifications possible with logical sum) {@link AiliaMemoryMode} (Default :{@link AiliaMemoryMode#OPTIMAIZE_DEFAULT})
-	 * @throws AiliaException
+	 * @throws AiliaException Exception
 	 */
 	public static native void SetMemoryMode(long handle, int mode) throws AiliaException;
 
 	/**
+	 * Disalbe layer fusion optimaization for inference
+	 *
+	 * <p>  This api use to get blob that remove by layer fusion optimization.
+	 * Must be specified immediately after ailiaCreate. It cannot be changed after calling ailiaOpen.
+	 * Note: When disable layer fusion optimization, inference speed may be down.
+	 * @param handle A network instance handle
+	 * @throws AiliaException
+	 */
+	public static native void DisableLayerFusion(long handle) throws AiliaException;
+
+	/**
+	 * Set the profile mode.
+	 *
+	 * <p> Change the profile mode.
+	 * If a value other than {@link AiliaProfileMode#PROFILE_DISABLE} is specified,
+	 * the profile data is added to Summary
+	 * @param handle A network instance handle
+	 * @param mode Profile mode (Default :{@link AiliaProfileMode#PROFILE_DISABLE})
+	 * @throws AiliaException Exception
+	 */
+	public static native void SetProfileMode(long handle, int mode) throws AiliaException;
+
+	/**
 	 * Returns the details of errors.
 	 *
-	 * <p>The return value does not have to be released.
-	 * The string is valid until the next ailia API function is called.</p>
 	 * @param handle A network instance handle
 	 * @return Error details
 	 */
@@ -438,8 +474,16 @@ public class Ailia {
 	/**
 	 * Get the version of the library.
 	 *
-	 * <p>The return value does not have to be released.</p>
 	 * @return Version number
 	 */
 	public static native String GetVersion();
+
+	/**
+	 * Release GPU and other resources that have been globally allocated with ailia.
+	 *
+	 * @return Version number
+         * @pre This function must be called when all Ailia instance have been destroyed. 
+	 * @throws AiliaException Exception
+	 */
+	public static native void Finalize() throws AiliaException;
 }
